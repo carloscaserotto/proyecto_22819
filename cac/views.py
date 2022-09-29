@@ -1,6 +1,9 @@
+from datetime import datetime
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse
+
+from django.template import loader
 
 
 # Create your views here.
@@ -10,16 +13,41 @@ def index(request):
     else:
         titulo = f'Titulo cuando se accede por otro metodo {request.method}'
     parameters_get = request.GET.get('otro')
-    return HttpResponse(f"""
-            <h1>{titulo}</h1>
-            <p>{parameters_get}</p>
-            """)
-
-    pass
+    #return HttpResponse(f"""
+    #        <h1>{titulo}</h1>
+    #        <p>{parameters_get}</p>
+    #        """)
+    listado_cursos =  [
+        {
+            'nombre':'Fullstack Java',
+            'descripcion':'Curso de Fullstack',
+            'categoria':'Programación'
+        },
+        {
+            'nombre':'Diseño UX/IU',
+            'descripcion':'🎨',
+            'categoria':'Diseño'
+        },
+        {
+            'nombre':'Big Data',
+            'descripcion':'test',
+            'categoria':'Analisis de Datos'
+        },
+    ]
+    return render(request, 'cac/index.html',{
+                                    'titulo':titulo, 
+                                    'params':parameters_get,
+                                    'cursos':listado_cursos,
+                                    'hoy':datetime.now
+                                    })
+    
 
 def quienes_somos(request):
     #return redirect('saludar_por_defecto')
-    return redirect(reverse('saludar', kwargs={'nombre':'Carli'}))
+    #return redirect(reverse('saludar', kwargs={'nombre':'Carli'}))
+    template = loader.get_template('cac/quienessomos.html')
+    context = { 'titulo':'Codo a codo - Quienes somos'}
+    return HttpResponse(template.render(context, request))
 
 def hola_mundo(request):
     return HttpResponse("Hola mundo Django")
